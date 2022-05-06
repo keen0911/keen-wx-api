@@ -1,4 +1,4 @@
-package com.example.emos.wx.api;
+package com.example.emos.wx;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
