@@ -66,4 +66,4 @@ emos:
     cache-expire: 10
 wx:
   app-id: 微信小程序APPID
-  app-secret: 微信小程序密钥
+  app-secret: 微信小程序密钥1
