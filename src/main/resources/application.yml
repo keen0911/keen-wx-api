@@ -64,3 +64,6 @@ emos:
     secret: abc123456
     expire: 5
     cache-expire: 10
+wx:
+  app-id: 微信小程序APPID
+  app-secret: 微信小程序密钥
