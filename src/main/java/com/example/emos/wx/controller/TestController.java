@@ -6,6 +6,8 @@ import com.example.emos.wx.controller.form.TestSayHelloForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,5 +23,11 @@ public class TestController {
         return R.ok().put("message", "Hello,"+form.getName());
     }
 
+    @PostMapping("/addUser")
+    @ApiOperation("添加用户")
+    @RequiresPermissions(value = {"ROOT", "USER:ADD"}, logical = Logical.OR)
+    public R addUser() {
+        return R.ok("用户添加成功");
+    }
 
 }

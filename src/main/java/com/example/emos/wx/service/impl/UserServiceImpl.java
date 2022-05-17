@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.example.emos.wx.db.dao.TbUserDao;
+import com.example.emos.wx.db.pojo.TbUser;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.UserService;
 
@@ -93,5 +94,21 @@ public class UserServiceImpl implements UserService {
     public Set<String> searchUserPermissions(int userId) {
         Set<String> permissions=userDao.searchUserPermissions(userId);
         return permissions;
+    }
+
+    @Override
+    public Integer login(String code) {
+        String openId = getOpenId(code);
+        Integer id = userDao.searchIdByOpenId(openId);
+        if (id == null) {
+            throw new EmosException("账户不存在");
+        }
+        //TODO 从消息列表接收消息，转移消息表
+        return id;
+    }
+
+    @Override
+    public TbUser searchById(int userId) {
+        return userDao.searchById(userId);
     }
 }
