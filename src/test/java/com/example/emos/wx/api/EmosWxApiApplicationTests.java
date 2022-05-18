@@ -1,21 +1,26 @@
 package com.example.emos.wx.api;
 
 import com.baidu.aip.face.AipFace;
+import com.baidu.aip.util.Base64Util;
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootTest
 class EmosWxApiApplicationTests {
 
-    public static final String APP_ID = "";
-    public static final String API_KEY = "";
-    public static final String SECRET_KEY = "";
+    public static final String APP_ID = "26238548";
+    public static final String API_KEY = "nGnWEOgfHT0V6BrmlEEbsW0V";
+    public static final String SECRET_KEY = "xnnM64GkcWtkFBh8knWQbUXxqqe3UUdI";
     @Test
     void faceDistinguish() {
         // 初始化一个AipFace
@@ -45,8 +50,23 @@ class EmosWxApiApplicationTests {
         options.put("user_id", "7");
         options.put("max_user_num", "3");
 
-        String image = "https://keen-1311891599.cos.ap-chengdu.myqcloud.com/img/face/wxfile%3A//tmp_059afdc6924fdfbb7c867d5c7ad4d6aa41914b09b9474468.jpg";
-        String imageType = "URL";
+        String imgFile="D:\\picture\\123456.jpg";
+        InputStream in = null;
+        byte[] data = null;
+        try {
+            in = new FileInputStream(imgFile);
+            data = new byte[in.available()];
+            in.read(data);
+            in.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String image= Base64Util.encode(data);
+        String imageType="BASE64";
+/*        String image = "https://keen-1311891599.cos.ap-chengdu.myqcloud.com/img/face/wxfile%3A//tmp_059afdc6924fdfbb7c867d5c7ad4d6aa41914b09b9474468.jpg";
+        String imageType = "URL";*/
         String groupIdList = "emos_face";
 
         // 人脸搜索

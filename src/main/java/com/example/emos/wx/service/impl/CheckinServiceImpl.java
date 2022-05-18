@@ -114,7 +114,7 @@ public class CheckinServiceImpl implements CheckinService {
             throw new EmosException("超出考勤时间段，无法考勤");
         }
 
-        AipFace client = aipface.AipFaceClient();
+        AipFace client = aipface.GetClient();
         int userId= (Integer) param.get("userId");
 
 

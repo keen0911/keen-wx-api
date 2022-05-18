@@ -12,14 +12,19 @@ import org.springframework.stereotype.Component;
 @Configuration
 @Slf4j
 public class BaiduAipFace{
+    @Value("")
+    String APP_ID;
 
+    @Value("")
+    String API_KEY;
+
+    @Value("")
+    String SECRET_KEY;
 
     @Bean
-    public AipFace AipFaceClient() {
+    public AipFace GetClient() {
         //设置APPID/AK/SK
-        String APP_ID = "26238548";
-        String API_KEY = "nGnWEOgfHT0V6BrmlEEbsW0V";
-        String SECRET_KEY = "xnnM64GkcWtkFBh8knWQbUXxqqe3UUdI";
+
 
 
         AipFace client = new AipFace(APP_ID, API_KEY, SECRET_KEY);
