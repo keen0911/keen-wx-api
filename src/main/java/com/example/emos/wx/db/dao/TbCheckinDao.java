@@ -8,4 +8,5 @@ import java.util.HashMap;
 @Mapper
 public interface TbCheckinDao {
     Integer haveCheckin(HashMap map);
+    void insert(TbCheckin checkin);
 }
