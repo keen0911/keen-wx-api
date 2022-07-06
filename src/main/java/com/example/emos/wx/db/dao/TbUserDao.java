@@ -8,15 +8,19 @@ import java.util.Set;
 
 @Mapper
 public interface TbUserDao {
-    public boolean haveRootUser();
+    boolean haveRootUser();
 
-    public int insert(HashMap param);
+    int insert(HashMap param);
 
-    public Integer searchIdByOpenId(String openId);
+    Integer searchIdByOpenId(String openId);
 
-    public Set<String> searchUserPermissions(int userId);
+    Set<String> searchUserPermissions(int userId);
 
-    public TbUser searchById(int userId);
+    TbUser searchById(int userId);
 
-    public HashMap searchNameAndDept(int userId);
+    HashMap searchNameAndDept(int userId);
+
+    String searchUserHiredate(int userId);
+
+    HashMap searchUserSummary(int userId);
 }

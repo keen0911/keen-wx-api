@@ -14,9 +14,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/emos?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://121.4.154.118:3306/emos?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       username: root
-      password: 123456
+      password: k254441461
       initial-size: 8
       max-active: 16
       min-idle: 8
@@ -27,9 +27,9 @@ spring:
 
   redis:
     database: 0
-    host: localhost
+    host: 121.4.154.118
     port: 6379
-    password: 123456
+    password: k254441461
     jedis:
       pool:
         max-active: 1000
@@ -39,17 +39,17 @@ spring:
 
   data:
     mongodb:
-      host: localhost
+      host: 121.4.154.118
       port: 27017
       database: emos
       authentication-database: admin
       username: admin
-      password: abc123456
+      password: k254441461
   mail:
     default-encoding: UTF-8
-    host: smtp.aliyun.com
-    username: yangdi525@aliyun.com
-    password: ax105105
+    host: smtp.qq.com
+    username: 2409306823@qq.com
+    password: kukvfvrentrkebfj
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.example.emos.wx.db.pojo
@@ -70,16 +70,16 @@ emos:
     expire: 5
     cache-expire: 10
   email:
-    system: 邮箱地址1
-    hr: 邮箱地址2
+    system: 2409306823@qq.com
+    hr: 1959124336@qq.com
   image-folder: D:/emos/image
 wx:
-  app-id:
-  app-secret:
+  app-id: wx60cb1ebabf001098
+  app-secret: 50c8aea1b80269ff0b270b92145cad1b
 baidu:
-  APP_ID:
-  API_KEY:
-  SECRET_KEY:
+  APP_ID: 26238548
+  API_KEY: nGnWEOgfHT0V6BrmlEEbsW0V
+  SECRET_KEY: xnnM64GkcWtkFBh8knWQbUXxqqe3UUdI
 
 
 

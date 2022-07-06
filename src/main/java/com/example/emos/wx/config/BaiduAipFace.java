@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Configuration
 @Slf4j
 public class BaiduAipFace{
-    @Value("")
+    @Value("${baidu.APP_ID}")
     String APP_ID;
 
-    @Value("")
+    @Value("${baidu.API_KEY}")
     String API_KEY;
 
-    @Value("")
+    @Value("${baidu.SECRET_KEY}")
     String SECRET_KEY;
 
     @Bean

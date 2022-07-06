@@ -1,13 +1,21 @@
 package com.example.emos.wx.service.impl;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
 import com.baidu.aip.face.AipFace;
+import com.baidu.aip.util.Base64Util;
 import com.example.emos.wx.config.BaiduAipFace;
 import com.example.emos.wx.config.SystemConstants;
 import com.example.emos.wx.db.dao.*;
 import com.example.emos.wx.db.pojo.TbCheckin;
+import com.example.emos.wx.db.pojo.TbFaceModel;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.CheckinService;
 import com.example.emos.wx.task.EmailTask;
@@ -25,6 +33,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -58,6 +70,11 @@ public class CheckinServiceImpl implements CheckinService {
 
     @Value("${emos.email.hr}")
     private String hrEmail;
+
+    @Autowired
+    private TbFaceModelDao faceModelDao;
+
+
 
 
 
@@ -104,6 +121,12 @@ public class CheckinServiceImpl implements CheckinService {
         Date d2=DateUtil.parse(DateUtil.today()+" "+constants.attendanceTime);
         Date d3=DateUtil.parse(DateUtil.today()+" "+constants.attendanceEndTime);
         int status=1;
+
+        int userId= (Integer) param.get("userId");
+        String faceModel=faceModelDao.searchFaceModel(userId);
+        if(faceModel==null){
+            throw new EmosException("不存在人脸模型");
+        }
         if(d1.compareTo(d2)<=0){
             status=1;
         }
@@ -115,16 +138,25 @@ public class CheckinServiceImpl implements CheckinService {
         }
 
         AipFace client = aipface.GetClient();
-        int userId= (Integer) param.get("userId");
-
-
-
-
         String image=(String)param.get("path");
-        String imageType = "URL";//用base64提交图片
+
+        String imgFile="D:\\picture\\123456.jpg";
+
+        InputStream in = null;
+        byte[] data = null;
+        try {
+            in = new FileInputStream(image);
+            data = new byte[in.available()];
+            in.read(data);
+            in.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        String image64= Base64Util.encode(data);
 
 
-
+        String imageType = "BASE64";//用base64提交图片
         String groupIdList = "emos_face";
         Double score;
         HashMap<String, Object> options = new HashMap();
@@ -133,30 +165,19 @@ public class CheckinServiceImpl implements CheckinService {
         options.put("liveness_control", "LOW");
         options.put("user_id", userId);
         options.put("max_user_num", "3");
-
-
-
-
         // 人脸搜索
-        JSONObject res = client.search(image, imageType, groupIdList, options);
+        JSONObject res = client.search(image64, imageType, groupIdList, options);
 
-
+        JSONObject r=null;
         try {
             System.out.println(res.toString(2));
-            JSONObject r = res.getJSONObject("result");
-            JSONArray user_list = r.getJSONArray("user_list");
-            JSONObject us = user_list.getJSONObject(0);
-            score = Double.valueOf(us.getString("score"));
-            System.out.println(score);
-
+            r = res.getJSONObject("result");
         } catch (JSONException e) {
-            throw new EmosException("人脸认证失败");
+            throw new EmosException("签到无效，重新签到");
         }
 
-
-
-        if(score<80){
-            throw new EmosException("签到无效，非本人签到");
+        if(r.isEmpty()){
+            throw new EmosException("签到无效，重新签到");
         }
         else{
             int risk=1;
@@ -169,13 +190,14 @@ public class CheckinServiceImpl implements CheckinService {
                 String code= cityDao.searchCode(city);
                 try{
                     String url = "http://m." + code + ".bendibao.com/news/yqdengji/?qu=" + district;
+                    System.out.println(url);
                     Document document= Jsoup.connect(url).get();
                     Elements elements=document.getElementsByClass("list-content");
                     if(elements.size()>0){
                         Element element=elements.get(0);
                         String result=element.select("p:last-child").text();
 //                            result="高风险";
-                        if("高风险".equals(result)){
+                        if("低风险".equals(result)){
                             risk=3;
                             //发送告警邮件
                             HashMap<String,String> map=userDao.searchNameAndDept(userId);
@@ -211,6 +233,113 @@ public class CheckinServiceImpl implements CheckinService {
             entity.setCreateTime(d1);
             checkinDao.insert(entity);
         }
+    }
+    @Override
+    public void createFaceModel(int uId, String path) {
+
+        AipFace client = aipface.GetClient();
+        // 传入可选参数调用接口
+        HashMap<String, String> options = new HashMap<>();
+        options.put("user_info", "user's info");
+        options.put("action_type", "REPLACE");//操作方式 APPEND: 当user_id在库中已经存在时，对此user_id重复注册时，新注册的图片默认会追加到该user_id下,REPLACE : 当对此user_id重复注册时,则会用新图替换库中该user_id下所有图片,默认使用APPEND
+/*        String image = "";
+        String imageType = "URL";*/
+        InputStream in = null;
+        byte[] data = null;
+        try {
+            in = new FileInputStream(path);
+            data = new byte[in.available()];
+            in.read(data);
+            in.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        String image= Base64Util.encode(data);
+        String imageType="BASE64";
+        String groupId = "emos_face";
+        String userId = String.valueOf(uId);
+        // 人脸注册
+        JSONObject res = client.addUser(image, imageType, groupId, userId, options);
+        try {
+            System.out.println(res.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(res.isEmpty()){
+            throw new EmosException("人脸模型创建失败");
+        }
+        else{
+            TbFaceModel entity=new TbFaceModel();
+            entity.setUserId(uId);
+            entity.setFaceModel("1");
+            faceModelDao.insert(entity);
+        }
+    }
+
+    @Override
+    public HashMap searchTodayCheckin(int userId) {
+        HashMap map=checkinDao.searchTodayCheckin(userId);
+        return map;
+    }
+
+    @Override
+    public long searchCheckinDays(int userId) {
+        long days=checkinDao.searchCheckinDays(userId);
+        return days;
+    }
+
+    @Override
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param) {
+        ArrayList<HashMap> checkinList=checkinDao.searchWeekCheckin(param);
+        ArrayList holidaysList=holidaysDao.searchHolidaysInRange(param);
+        ArrayList workdayList=workdayDao.searchWorkdayInRange(param);
+        DateTime startDate=DateUtil.parseDate(param.get("startDate").toString());
+        DateTime endDate=DateUtil.parseDate(param.get("endDate").toString());
+        DateRange range=DateUtil.range(startDate,endDate, DateField.DAY_OF_MONTH);
+        ArrayList<HashMap> list=new ArrayList<>();
+        range.forEach(one->{
+            String date=one.toString("yyyy-MM-dd");
+            String type="工作日";
+            if(one.isWeekend()){
+                type="节假日";
+            }
+            if(holidaysList!=null&&holidaysList.contains(date)){
+                type="节假日";
+            }
+            else if(workdayList!=null&&workdayList.contains(date)){
+                type="工作日";
+            }
+            String status="";
+            if(type.equals("工作日")&&DateUtil.compare(one,DateUtil.date())<=0){
+                status="缺勤";
+                boolean flag=false;
+                for (HashMap<String,String> map:checkinList){
+                    if(map.containsValue(date)){
+                        status=map.get("status");
+                        flag=true;
+                        break;
+                    }
+                }
+                DateTime endTime=DateUtil.parse(DateUtil.today()+" "+constants.attendanceEndTime);
+                String today=DateUtil.today();
+                if(date.equals(today)&&DateUtil.date().isBefore(endTime)&&flag==false){
+                    status="";
+                }
+            }
+            HashMap map=new HashMap();
+            map.put("date",date);
+            map.put("status",status);
+            map.put("type",type);
+            map.put("day",one.dayOfWeekEnum().toChinese("周"));
+            list.add(map);
+        });
+        return list;
+    }
+
+    @Override
+    public ArrayList<HashMap> searchMonthCheckin(HashMap param) {
+        return this.searchWeekCheckin(param);
     }
 
 }

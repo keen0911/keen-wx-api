@@ -64,10 +64,12 @@ public class UserServiceImpl implements UserService {
                 param.put("openId", openId);
                 param.put("nickname", nickname);
                 param.put("photo", photo);
+                param.put("name","程某");
                 param.put("role", "[0]");
                 param.put("status", 1);
                 param.put("createTime", new Date());
                 param.put("root", true);
+                param.put("deptName", "管理部");
                 userDao.insert(param);
                 int id=userDao.searchIdByOpenId(openId);
 
@@ -92,8 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<String> searchUserPermissions(int userId) {
-        Set<String> permissions=userDao.searchUserPermissions(userId);
-        return permissions;
+        return userDao.searchUserPermissions(userId);
     }
 
     @Override
@@ -110,5 +111,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public TbUser searchById(int userId) {
         return userDao.searchById(userId);
+    }
+
+    @Override
+    public String searchUserHiredate(int userId) {
+        return userDao.searchUserHiredate(userId);
+    }
+
+    @Override
+    public HashMap searchUserSummary(int userId) {
+        return userDao.searchUserSummary(userId);
     }
 }

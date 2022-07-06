@@ -96,10 +96,27 @@ class EmosWxApiApplicationTests {
 //        options.put("liveness_control", "LOW");
         options.put("action_type", "REPLACE");//操作方式 APPEND: 当user_id在库中已经存在时，对此user_id重复注册时，新注册的图片默认会追加到该user_id下,REPLACE : 当对此user_id重复注册时,则会用新图替换库中该user_id下所有图片,默认使用APPEND
 
-        String image = "https://keen-1311891599.cos.ap-chengdu.myqcloud.com/img/face/wxfile%3A//tmp_059afdc6924fdfbb7c867d5c7ad4d6aa41914b09b9474468.jpg";
-        String imageType = "URL";
+/*        String image = "https://keen-1311891599.cos.ap-chengdu.myqcloud.com/img/face/wxfile%3A//tmp_059afdc6924fdfbb7c867d5c7ad4d6aa41914b09b9474468.jpg";
+        String imageType = "URL";*/
+
+        String imgFile="D:\\picture\\1234567.png";
+        InputStream in = null;
+        byte[] data = null;
+        try {
+            in = new FileInputStream(imgFile);
+            data = new byte[in.available()];
+            in.read(data);
+            in.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String image= Base64Util.encode(data);
+        String imageType="BASE64";
+
         String groupId = "emos_face";
-        String userId = "7";
+        String userId = "6";
 
         // 人脸注册
         JSONObject res = client.addUser(image, imageType, groupId, userId, options);

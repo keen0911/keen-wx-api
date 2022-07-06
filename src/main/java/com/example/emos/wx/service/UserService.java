@@ -2,15 +2,20 @@ package com.example.emos.wx.service;
 
 import com.example.emos.wx.db.pojo.TbUser;
 
+import java.util.HashMap;
 import java.util.Set;
 
 public interface UserService {
-    public int registerUser(String registerCode,String code,String nickname,String photo);
+    int registerUser(String registerCode, String code, String nickname, String photo);
 
-    public Set<String> searchUserPermissions(int userId);
+    Set<String> searchUserPermissions(int userId);
 
-    public Integer login(String code);
+    Integer login(String code);
 
-    public TbUser searchById(int userId);
+    TbUser searchById(int userId);
+
+    String searchUserHiredate(int userId);
+
+    HashMap searchUserSummary(int userId);
 
 }
