@@ -57,7 +57,7 @@ public class CheckinServiceImpl implements CheckinService {
     private TbCheckinDao checkinDao;
 
     @Autowired
-    private BaiduAipFace aipface;
+    private AipFace client;
 
     @Autowired
     private TbCityDao cityDao;
@@ -137,7 +137,6 @@ public class CheckinServiceImpl implements CheckinService {
             throw new EmosException("超出考勤时间段，无法考勤");
         }
 
-        AipFace client = aipface.GetClient();
         String image=(String)param.get("path");
 
         String imgFile="D:\\picture\\123456.jpg";
@@ -237,7 +236,6 @@ public class CheckinServiceImpl implements CheckinService {
     @Override
     public void createFaceModel(int uId, String path) {
 
-        AipFace client = aipface.GetClient();
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<>();
         options.put("user_info", "user's info");

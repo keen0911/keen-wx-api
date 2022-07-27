@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.FileInputStream;
@@ -18,13 +19,11 @@ import java.util.Map;
 @SpringBootTest
 class EmosWxApiApplicationTests {
 
-    public static final String APP_ID = "26238548";
-    public static final String API_KEY = "nGnWEOgfHT0V6BrmlEEbsW0V";
-    public static final String SECRET_KEY = "xnnM64GkcWtkFBh8knWQbUXxqqe3UUdI";
+
+    @Autowired
+    private AipFace client;
     @Test
     void faceDistinguish() {
-        // 初始化一个AipFace
-        AipFace client = new AipFace(APP_ID, API_KEY, SECRET_KEY);
         String image = "https://keen-1311891599.cos.ap-chengdu.myqcloud.com/img/face/wxfile%3A//tmp_059afdc6924fdfbb7c867d5c7ad4d6aa41914b09b9474468.jpg";
         String imageType = "URL";
 
@@ -42,7 +41,6 @@ class EmosWxApiApplicationTests {
 
     @Test
     void faceContrast() {
-        AipFace client = new AipFace(APP_ID, API_KEY, SECRET_KEY);
         HashMap<String, Object> options = new HashMap();
         options.put("match_threshold", "70");
         options.put("quality_control", "NORMAL");
@@ -88,7 +86,6 @@ class EmosWxApiApplicationTests {
 
     @Test
     void faceRegistration() {
-        AipFace client = new AipFace(APP_ID, API_KEY, SECRET_KEY);
         // 传入可选参数调用接口
         HashMap<String, String> options = new HashMap<>();
         options.put("user_info", "user's info");
