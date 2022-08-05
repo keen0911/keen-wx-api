@@ -7,4 +7,4 @@ server:
     connection-timeout: 5000ms
   port: 8080
   servlet:
-    context-path: /emos-wx-api
+    context-path: /keen-wx-api
