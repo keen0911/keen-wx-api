@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.emos.wx.db.dao.TbPermissionDao">
-  <resultMap id="BaseResultMap" type="com.example.emos.wx.db.pojo.TbPermission">
+<mapper namespace="com.example.keen.wx.db.dao.TbPermissionDao">
+  <resultMap id="BaseResultMap" type="com.example.keen.wx.db.pojo.TbPermission">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
     <result column="module_id" jdbcType="INTEGER" property="moduleId" />
@@ -20,13 +20,13 @@
     delete from tb_permission
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.emos.wx.db.pojo.TbPermission" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.keen.wx.db.pojo.TbPermission" useGeneratedKeys="true">
     insert into tb_permission (permission_name, module_id, action_id
       )
     values (#{permissionName,jdbcType=VARCHAR}, #{moduleId,jdbcType=INTEGER}, #{actionId,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.emos.wx.db.pojo.TbPermission" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.keen.wx.db.pojo.TbPermission" useGeneratedKeys="true">
     insert into tb_permission
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="permissionName != null">
@@ -51,7 +51,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.emos.wx.db.pojo.TbPermission">
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.keen.wx.db.pojo.TbPermission">
     update tb_permission
     <set>
       <if test="permissionName != null">
@@ -66,7 +66,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.example.emos.wx.db.pojo.TbPermission">
+  <update id="updateByPrimaryKey" parameterType="com.example.keen.wx.db.pojo.TbPermission">
     update tb_permission
     set permission_name = #{permissionName,jdbcType=VARCHAR},
       module_id = #{moduleId,jdbcType=INTEGER},

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.emos.wx.db.dao.TbModuleDao">
-  <resultMap id="BaseResultMap" type="com.example.emos.wx.db.pojo.TbModule">
+<mapper namespace="com.example.keen.wx.db.dao.TbModuleDao">
+  <resultMap id="BaseResultMap" type="com.example.keen.wx.db.pojo.TbModule">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="module_code" jdbcType="VARCHAR" property="moduleCode" />
     <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
@@ -19,11 +19,11 @@
     delete from tb_module
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.emos.wx.db.pojo.TbModule" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.keen.wx.db.pojo.TbModule" useGeneratedKeys="true">
     insert into tb_module (module_code, module_name)
     values (#{moduleCode,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.emos.wx.db.pojo.TbModule" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.keen.wx.db.pojo.TbModule" useGeneratedKeys="true">
     insert into tb_module
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="moduleCode != null">
@@ -42,7 +42,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.emos.wx.db.pojo.TbModule">
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.keen.wx.db.pojo.TbModule">
     update tb_module
     <set>
       <if test="moduleCode != null">
@@ -54,7 +54,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.example.emos.wx.db.pojo.TbModule">
+  <update id="updateByPrimaryKey" parameterType="com.example.keen.wx.db.pojo.TbModule">
     update tb_module
     set module_code = #{moduleCode,jdbcType=VARCHAR},
       module_name = #{moduleName,jdbcType=VARCHAR}
