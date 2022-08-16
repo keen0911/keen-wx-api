@@ -36,12 +36,6 @@
     <insert id="insert" parameterType="HashMap">
         INSERT INTO tb_user
         SET
-        <if test="username!=null">
-            username = #{username},
-        </if>
-        <if test="password!=null">
-            password = HEX(AES_ENCRYPT(#{password},#{username})),
-        </if>
         <if test="openId!=null">
             open_id = #{openId},
         </if>
@@ -142,4 +136,15 @@
     <select id="searchMemberEmail" parameterType="int" resultType="String">
         SELECT email FROM tb_user WHERE id=#{id} AND status = 1
     </select>
+    <update id="updateWebAcc" parameterType="HashMap">
+        UPDATE tb_user
+        SET
+        <if test="username!=null">
+            username = #{username},
+        </if>
+        <if test="password!=null">
+            password = HEX(AES_ENCRYPT(#{password},#{username}))
+        </if>
+        WHERE id=#{userId}
+    </update>
 </mapper>

@@ -25,11 +25,11 @@ public class MeetingServiceImpl implements MeetingService {
     private TbMeetingDao meetingDao;
     @Autowired
     private TbUserDao userDao;
-/*    @Value("${emos.code}")
+/*    @Value("${keen.code}")
     private String code;
     @Value("${workflow.url}")
     private String workflow;
-    @Value("${emos.recieveNotify}")
+    @Value("${keen.recieveNotify}")
     private String recieveNotify;*/
     @Autowired
     private RedisTemplate redisTemplate;

@@ -28,7 +28,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
     @Autowired
     private ThreadLocalToken threadLocalToken;
 
-    @Value("${emos.jwt.cache-expire}")
+    @Value("${keen.jwt.cache-expire}")
     private int cacheExpire;
 
     @Autowired

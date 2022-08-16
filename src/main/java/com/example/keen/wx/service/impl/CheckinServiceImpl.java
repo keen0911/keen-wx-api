@@ -62,7 +62,7 @@ public class CheckinServiceImpl implements CheckinService {
     @Autowired
     private EmailTask emailTask;
 
-    @Value("${emos.email.hr}")
+    @Value("${keen.email.hr}")
     private String hrEmail;
 
     @Autowired
@@ -190,7 +190,7 @@ public class CheckinServiceImpl implements CheckinService {
                         Element element=elements.get(0);
                         String result=element.select("p:last-child").text();
 //                            result="高风险";
-                        if("低风险".equals(result)){
+                        if("常态化防控".equals(result)){
                             risk=3;
                             //发送告警邮件
                             HashMap<String,String> map=userDao.searchNameAndDept(userId);
@@ -199,8 +199,8 @@ public class CheckinServiceImpl implements CheckinService {
                             deptName = deptName != null ? deptName : "";
                             SimpleMailMessage message=new SimpleMailMessage();
                             message.setTo(hrEmail);
-                            message.setSubject("员工" + name + "身处高风险疫情地区警告");
-                            message.setText(deptName + "员工" + name + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + address + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
+                            message.setSubject("学生" + name + "身处高风险疫情地区警告");
+                            message.setText(deptName + "学生" + name + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + address + "，属于新冠疫情高风险地区，请及时与该学生联系，核实情况！");
                             emailTask.sendAsync(message);
                         }
                         else if("中风险".equals(result)){

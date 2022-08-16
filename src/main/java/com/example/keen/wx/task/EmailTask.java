@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class EmailTask implements Serializable {
     @Autowired
     private JavaMailSender javaMailSender;
-    @Value("${emos.email.system}")
+    @Value("${keen.email.system}")
     private String mailbox;
 
     @Async

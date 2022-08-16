@@ -26,7 +26,7 @@ public class SwaggerConfig {
     public Docket createRestApi() {
         Docket docket = new Docket(DocumentationType.SWAGGER_2);
         ApiInfoBuilder builder = new ApiInfoBuilder();
-        builder.title("EMOS在线办公系统");
+        builder.title("keen智慧校园");
         ApiInfo info = builder.build();
         docket.apiInfo(info);
 

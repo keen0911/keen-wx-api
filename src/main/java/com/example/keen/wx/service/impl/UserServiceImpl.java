@@ -1,5 +1,6 @@
 package com.example.keen.wx.service.impl;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -99,8 +100,6 @@ public class UserServiceImpl implements UserService {
         else if(registerCode.equals("梁一鸣")){
                 HashMap param=new HashMap();
                 param.put("openId", openId);
-                param.put("username","keen6666");
-                param.put("password", "k254441461");
                 param.put("nickname", nickname);
                 param.put("photo", photo);
                 param.put("name","未设置");
@@ -113,11 +112,17 @@ public class UserServiceImpl implements UserService {
                 userDao.insert(param);
                 id=userDao.searchIdByOpenId(openId);
 
+                HashMap acc=new HashMap();
+                acc.put("userId",id);
+                acc.put("username","keen"+id);
+                acc.put("password","keen0911");
+                userDao.updateWebAcc(acc);
+
                 MessageEntity entity=new MessageEntity();
                 entity.setSenderId(0);
                 entity.setSenderName("系统消息");
                 entity.setUuid(IdUtil.simpleUUID());
-                entity.setMsg("欢迎您注册成为一名keener，请及时更新你的学生个人信息。");
+                entity.setMsg("欢迎您注册成为一名keener，这是你的web端账号：keen"+id+"，初始密码为keen0911，请及时到www.keen0911.top修改你的web密码。");
                 entity.setSendTime(new Date());
                 messageTask.sendAsync(id+"",entity);
         }

@@ -37,7 +37,7 @@ public class UserController {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Value("${emos.jwt.cache-expire}")
+    @Value("${keen.jwt.cache-expire}")
     private int cacheExpire;
     @Value("${trtc.appid}")
     private Integer appid;

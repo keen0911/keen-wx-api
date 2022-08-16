@@ -37,7 +37,7 @@ public class CheckinController {
     @Autowired
     private CheckinService checkinService;
 
-    @Value("${emos.image-folder}")
+    @Value("${keen.image-folder}")
     private String imageFolder;
 
     @Autowired
