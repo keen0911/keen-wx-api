@@ -133,8 +133,6 @@ public class CheckinServiceImpl implements CheckinService {
 
         String image=(String)param.get("path");
 
-        String imgFile="D:\\picture\\123456.jpg";
-
         InputStream in = null;
         byte[] data = null;
         try {
@@ -168,7 +166,6 @@ public class CheckinServiceImpl implements CheckinService {
         } catch (JSONException e) {
             throw new KeenException("签到无效，重新签到");
         }
-
         if(r.isEmpty()){
             throw new KeenException("签到无效，重新签到");
         }

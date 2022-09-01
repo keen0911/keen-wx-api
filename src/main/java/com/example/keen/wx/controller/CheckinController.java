@@ -21,9 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 @RequestMapping("/checkin")
@@ -62,7 +65,15 @@ public class CheckinController {
         int userId=jwtUtil.getUserId(token);
         String fileName=file.getOriginalFilename().toLowerCase();
 
-        String path=imageFolder+"/"+fileName;
+        String dateDir = new SimpleDateFormat("/yyyy/MM/dd").format(new Date());
+        String localDirPath = imageFolder + dateDir;
+        System.out.println(localDirPath);
+        //创建目录
+        File dirFile = new File(localDirPath);
+        if (!dirFile.exists()){//不存在创建目录
+            dirFile.mkdirs();
+        }
+        String path=localDirPath+"/"+fileName+"ID"+userId;
         try{
             file.transferTo(Paths.get(path));
             HashMap param=new HashMap();
@@ -78,9 +89,6 @@ public class CheckinController {
         }catch (IOException e){
             log.error(e.getMessage(),e);
             throw new KeenException("图片保存错误");
-        }
-        finally {
-            FileUtil.del(path);
         }
     }
 
