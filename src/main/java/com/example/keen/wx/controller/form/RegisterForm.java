@@ -21,4 +21,6 @@ public class RegisterForm {
 
     @NotBlank(message = "头像不能为空")
     private String photo;
+
+    private String tid;
 }

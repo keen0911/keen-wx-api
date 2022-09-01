@@ -10,4 +10,6 @@ import javax.validation.constraints.NotBlank;
 public class LoginForm {
     @NotBlank(message = "临时授权不能为空")
     private String code;
+
+    private String tid;
 }

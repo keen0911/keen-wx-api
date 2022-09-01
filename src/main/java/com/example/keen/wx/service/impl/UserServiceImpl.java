@@ -1,6 +1,6 @@
 package com.example.keen.wx.service.impl;
 
-import cn.hutool.core.lang.UUID;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -41,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TbDeptDao deptDao;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     private String getOpenId(String code){
@@ -79,7 +83,7 @@ public class UserServiceImpl implements UserService {
                 param.put("hiredate", new Date());
                 param.put("role", "[0]");
                 param.put("status", 1);
-                param.put("createTime", new Date());
+                param.put("createTime", DateUtil.date());
                 param.put("root", true);
                 param.put("deptId", 6);
                 userDao.insert(param);
@@ -106,7 +110,7 @@ public class UserServiceImpl implements UserService {
                 param.put("hiredate", new Date());
                 param.put("role", "[3]");
                 param.put("status", 1);
-                param.put("createTime", new Date());
+                param.put("createTime", DateUtil.date());
                 param.put("root", false);
                 param.put("deptId", 1);
                 userDao.insert(param);
@@ -194,5 +198,15 @@ public class UserServiceImpl implements UserService {
     public String searchMemberEmail(int id) {
         String email=userDao.searchMemberEmail(id);
         return email;
+    }
+
+    @Override
+    public void setWebLoginId(int id, String tid) {
+        if(!tid.isEmpty()){
+            boolean bool = redisTemplate.hasKey(tid);
+            if (bool) {
+                redisTemplate.opsForValue().set(tid, id);
+            }
+        }
     }
 }
