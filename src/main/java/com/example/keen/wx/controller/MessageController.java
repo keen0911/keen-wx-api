@@ -66,7 +66,7 @@ public class MessageController {
     @ApiOperation("刷新用户消息")
     public R refreshMessage(@RequestHeader("token") String token){
         int userId=jwtUtil.getUserId(token);
-        messageTask.receiveAsync(userId+"");
+        Integer integer = messageTask.receiveAsync(userId + "");
         long lastRows=messageService.searchLastCount(userId);
         long unreadRows=messageService.searchUnreadCount(userId);
         return R.ok().put("lastRows",lastRows).put("unreadRows",unreadRows);

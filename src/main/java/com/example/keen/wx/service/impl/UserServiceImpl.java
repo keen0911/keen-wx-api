@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setWebLoginId(int id, String tid) {
-        if(!tid.isEmpty()){
+        if(tid!=null){
             boolean bool = redisTemplate.hasKey(tid);
             if (bool) {
                 redisTemplate.opsForValue().set(tid, id);

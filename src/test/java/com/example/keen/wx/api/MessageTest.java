@@ -33,7 +33,7 @@ public class MessageTest {
 
             MessageRefEntity ref=new MessageRefEntity();
             ref.setMessageId(id);
-            ref.setReceiverId(5); //接收人ID
+            ref.setReceiverId(29); //接收人ID
             ref.setLastFlag(true);
             ref.setReadFlag(false);
             messageService.insertRef(ref);
