@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.keen0911.wx.db.mapper.CheckinConfigMapper">
+
+    <resultMap id="BaseResultMap" type="top.keen0911.wx.db.pojo.CheckinConfig">
+            <id property="id" column="id" jdbcType="OTHER"/>
+            <result property="paramKey" column="param_key" jdbcType="VARCHAR"/>
+            <result property="paramValue" column="param_value" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,param_key,param_value,
+        status,remark
+    </sql>
+
+    <select id="selectAllParam" resultType="top.keen0911.wx.db.pojo.CheckinConfig">
+        SELECT param_key,param_value FROM tb_checkin_config WHERE status =1;
+    </select>
+</mapper>

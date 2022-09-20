@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.keen0911.wx.db.mapper.PermissionMapper">
+
+    <resultMap id="BaseResultMap" type="top.keen0911.wx.db.pojo.Permission">
+            <id property="id" column="id" jdbcType="OTHER"/>
+            <result property="permission_name" column="permission_name" jdbcType="VARCHAR"/>
+            <result property="module_id" column="module_id" jdbcType="OTHER"/>
+            <result property="action_id" column="action_id" jdbcType="OTHER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,permission_name,module_id,
+        action_id
+    </sql>
+</mapper>

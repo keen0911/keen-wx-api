@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.keen0911.wx.db.mapper.DeptMapper">
+
+    <resultMap id="BaseResultMap" type="top.keen0911.wx.db.pojo.Dept">
+            <id property="id" column="id" jdbcType="OTHER"/>
+            <result property="dept_name" column="dept_name" jdbcType="VARCHAR"/>
+            <result property="tel" column="tel" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="recode" column="recode" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,dept_name,tel,
+        email,recode,status
+    </sql>
+
+    <select id="searchDeptMembers" parameterType="String" resultType="HashMap">
+        SELECT
+        d.id,
+        d.dept_name AS deptName,
+        COUNT(u.id) AS count
+        FROM tb_dept d LEFT JOIN tb_user u ON u.dept_id=d.id AND u.status=1
+        <if test="keyword!=null">
+            WHERE u.name LIKE '%${keyword}%'
+        </if>
+        GROUP BY d.id
+    </select>
+    <select id="searchDeptByRecode" parameterType="String" resultType="Integer">
+        SELECT id FROM tb_dept WHERE recode = #{recode} AND status= 1
+    </select>
+
+    <insert id="insert" parameterType="HashMap">
+        INSERT INTO tb_dept
+        SET
+        <if test="id!=null">
+            open_id = #{id},
+        </if>
+        dept_name = #{dept_name},
+        <if test="tel!=null">
+            tel = #{tel},
+        </if>
+        <if test="email!=null">
+            email=#{email},
+        </if>
+        <if test="recode!=null">
+            recode = #{recode},
+        </if>
+        status = #{status}
+    </insert>
+</mapper>

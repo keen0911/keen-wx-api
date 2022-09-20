@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.keen0911.wx.db.mapper.CheckinMapper">
+
+    <resultMap id="BaseResultMap" type="top.keen0911.wx.db.pojo.Checkin">
+            <id property="id" column="id" jdbcType="OTHER"/>
+            <result property="user_id" column="user_id" jdbcType="OTHER"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="country" column="country" jdbcType="VARCHAR"/>
+            <result property="province" column="province" jdbcType="VARCHAR"/>
+            <result property="city" column="city" jdbcType="VARCHAR"/>
+            <result property="district" column="district" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="risk" column="risk" jdbcType="OTHER"/>
+            <result property="date" column="date" jdbcType="DATE"/>
+            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,address,
+        country,province,city,
+        district,status,risk,
+        date,create_time
+    </sql>
+
+    <select id="haveCheckin" parameterType="HashMap" resultType="Integer">
+        SELECT id FROM tb_checkin WHERE user_id = #{user_id} AND date =CURRENT_DATE AND create_time BETWEEN #{start} AND #{end} LIMIT 1;
+    </select>
+    <select id="searchTodayCheckin" parameterType="int" resultType="HashMap">
+        SELECT
+            u.name,
+            u.photo,
+            d.dept_name AS deptName,
+            ck.address,
+            CASE
+                WHEN ck.status=1 THEN '正常'
+                WHEN ck.status=2 THEN '迟到'
+                END as status,
+            CASE
+                WHEN ck.risk=1 THEN '低风险'
+                WHEN ck.risk=2 THEN '中风险'
+                WHEN ck.risk=3 THEN '高风险'
+                END as risk,
+            DATE_FORMAT(ck.create_time,"%H:%i") AS checkinTime,
+            ck.date
+        FROM tb_user u
+                 LEFT JOIN tb_dept d ON u.dept_id=d.id
+                 LEFT JOIN tb_checkin ck ON u.id=ck.user_id AND ck.date=CURRENT_DATE
+        WHERE u.id=#{user_id} AND u.status=1
+    </select>
+    <select id="searchCheckinDays" parameterType="int" resultType="long">
+        SELECT COUNT(*) AS count
+        FROM tb_checkin
+        WHERE user_id=#{user_id}
+    </select>
+    <select id="searchWeekCheckin" parameterType="HashMap" resultType="HashMap">
+        SELECT
+            CAST(date AS CHAR) AS date,
+	  IF(status=1,"正常","迟到") AS status
+        FROM tb_checkin
+        WHERE user_id=#{user_id}
+          AND date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <insert id="insert" parameterType="top.keen0911.wx.db.pojo.Checkin">
+        INSERT INTO tb_checkin
+        SET user_id=#{user_id},
+        <if test="address!=null">
+            address=#{address},
+        </if>
+        <if test="country!=null">
+            country=#{country},
+        </if>
+        <if test="province!=null">
+            province=#{province},
+        </if>
+        <if test="city!=null">
+            city=#{city},
+        </if>
+        <if test="district!=null">
+            district=#{district},
+        </if>
+        status=#{status},
+        <if test="risk!=null">
+            risk=#{risk},
+        </if>
+        date=#{date},
+        create_time=#{create_time}
+    </insert>
+
+</mapper>

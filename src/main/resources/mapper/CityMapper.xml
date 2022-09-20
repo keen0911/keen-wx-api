@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.keen0911.wx.db.mapper.CityMapper">
+
+    <resultMap id="BaseResultMap" type="top.keen0911.wx.db.pojo.City">
+            <id property="id" column="id" jdbcType="OTHER"/>
+            <result property="city" column="city" jdbcType="VARCHAR"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,city,code
+    </sql>
+
+    <select id="searchCode" parameterType="String" resultType="String">
+        SELECT code FROM tb_city WHERE city =#{city}
+    </select>
+</mapper>
