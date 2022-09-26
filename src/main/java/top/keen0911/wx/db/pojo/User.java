@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.Date;
  */
 @TableName(value ="tb_user")
 @Data
+@ApiModel
 public class User implements Serializable {
     /**
      * 主键
@@ -101,6 +103,12 @@ public class User implements Serializable {
     private Integer deptId;
 
     /**
+     * 学号
+     */
+    @TableField(value = "student_id")
+    private String studentId;
+
+    /**
      * 状态
      */
     @TableField(value = "status")
@@ -141,6 +149,7 @@ public class User implements Serializable {
             && (this.getRole() == null ? other.getRole() == null : this.getRole().equals(other.getRole()))
             && (this.getRoot() == null ? other.getRoot() == null : this.getRoot().equals(other.getRoot()))
             && (this.getDeptId() == null ? other.getDeptId() == null : this.getDeptId().equals(other.getDeptId()))
+            && (this.getStudentId() == null ? other.getStudentId() == null : this.getStudentId().equals(other.getStudentId()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
     }
@@ -163,6 +172,7 @@ public class User implements Serializable {
         result = prime * result + ((getRole() == null) ? 0 : getRole().hashCode());
         result = prime * result + ((getRoot() == null) ? 0 : getRoot().hashCode());
         result = prime * result + ((getDeptId() == null) ? 0 : getDeptId().hashCode());
+        result = prime * result + ((getStudentId() == null) ? 0 : getStudentId().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         return result;
@@ -188,6 +198,7 @@ public class User implements Serializable {
         sb.append(", role=").append(role);
         sb.append(", root=").append(root);
         sb.append(", dept_id=").append(deptId);
+        sb.append(", student_id=").append(studentId);
         sb.append(", status=").append(status);
         sb.append(", create_time=").append(createTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);

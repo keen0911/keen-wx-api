@@ -19,6 +19,7 @@
             <result property="role" column="role" jdbcType="OTHER"/>
             <result property="root" column="root" jdbcType="TINYINT"/>
             <result property="deptId" column="dept_id" jdbcType="OTHER"/>
+            <result property="studentId" column="student_id" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -28,7 +29,7 @@
         open_id,nickname,photo,
         name,sex,tel,
         email,hiredate,role,
-        root,dept_id,status,
+        root,dept_id,student_id,status,
         create_time
     </sql>
 
@@ -47,7 +48,7 @@
     </select>
     <select id="searchById" parameterType="int" resultType="top.keen0911.wx.db.pojo.User">
         SELECT
-            id, open_id, nickname, photo, name, sex, tel, role, root, dept_id, status, create_time
+            id, open_id, nickname, photo, name, sex, tel, role, email, root, dept_id, student_id, status, create_time
         FROM tb_user WHERE id=#{userId} AND status=1
     </select>
     <select id="searchNameAndDept" parameterType="int" resultType="HashMap">
@@ -167,6 +168,7 @@
     <select id="searchMemberEmail" parameterType="int" resultType="String">
         SELECT email FROM tb_user WHERE id=#{id} AND status = 1
     </select>
+
     <update id="updateWebAcc" parameterType="HashMap">
         UPDATE tb_user
         SET
@@ -178,4 +180,7 @@
         </if>
         WHERE id=#{userId}
     </update>
+    <select id="searchWebAcc" parameterType="int" resultType="HashMap">
+        SELECT AES_DECRYPT(UNHEX(password),username),username FROM tb_user WHERE id=#{id} AND status = 1
+    </select>
 </mapper>

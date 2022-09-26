@@ -2,16 +2,22 @@ package top.keen0911.wx.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.SimpleMailMessage;
 import top.keen0911.wx.db.mapper.DeptMapper;
 import top.keen0911.wx.db.mapper.UserMapper;
+import top.keen0911.wx.db.pojo.Dept;
 import top.keen0911.wx.db.pojo.MessageEntity;
 import top.keen0911.wx.db.pojo.User;
 import top.keen0911.wx.exception.KeenException;
 import top.keen0911.wx.service.UserService;
 
+import top.keen0911.wx.task.EmailTask;
 import top.keen0911.wx.task.MessageTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +32,7 @@ import java.util.*;
 @Service
 @Slf4j
 @Scope("prototype")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Value("${wx.app-id}")
     private String appId;
@@ -46,6 +52,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private EmailTask emailTask;
 
     private String getOpenId(String code){
         String url="https://api.weixin.qq.com/sns/jscode2session";
@@ -67,6 +75,20 @@ public class UserServiceImpl implements UserService {
     public int registerUser(String registerCode, String code, String nickname, String photo) {
         String openId=getOpenId(code);
         int id=0;
+
+        User userBean = new User();
+        userBean.setOpenId(openId);
+        userBean.setNickname(nickname);
+        userBean.setPhoto(photo);
+        userBean.setName("keener");
+        userBean.setHiredate(new Date());
+        userBean.setCreateTime(DateUtil.date());
+        userBean.setStatus((byte) 1);
+        userBean.setRoot(false);
+        userBean.setRole("[3]");
+
+
+
         Integer deptId=deptMapper.searchDeptByRecode(registerCode);
         if (userMapper.searchIdByOpenId(openId)!=null){
             throw new KeenException("已存在账号");
@@ -74,26 +96,23 @@ public class UserServiceImpl implements UserService {
         if(registerCode.equals("000000")){
             boolean bool=userMapper.haveRootUser();
             if(!bool){
-                HashMap param=new HashMap();
-                param.put("username","keen0911");
-                param.put("password", "k254441461");
-                param.put("openId", openId);
-                param.put("nickname", nickname);
-                param.put("photo", photo);
-                param.put("name","keen");
-                param.put("hiredate", new Date());
-                param.put("role", "[0]");
-                param.put("status", 1);
-                param.put("createTime", DateUtil.date());
-                param.put("root", true);
-                userMapper.insert(param);
+                userBean.setRoot(true);
+                userBean.setRole("[0]");
+                userBean.setUsername("keen");
+                userMapper.insert(userBean);
                 id=userMapper.searchIdByOpenId(openId);
+
+                HashMap acc=new HashMap();
+                acc.put("userId",id);
+                acc.put("username","keen");
+                acc.put("password","keen0911");
+                userMapper.updateWebAcc(acc);
 
                 MessageEntity entity=new MessageEntity();
                 entity.setSenderId(0);
                 entity.setSenderName("系统消息");
                 entity.setUuid(IdUtil.simpleUUID());
-                entity.setMsg("已为你初始化班级，请及时在我的-班级管理更新你的班级信息。及时更新你的邮箱信息以便系统发送你的的web账号和初始密码");
+                entity.setMsg("你好keen");
                 entity.setSendTime(new Date());
                 messageTask.sendAsync(id+"",entity);
             }
@@ -102,28 +121,20 @@ public class UserServiceImpl implements UserService {
             }
         }
         else if(registerCode.equals("班长")){
-            HashMap param=new HashMap();
-            param.put("openId", openId);
-            param.put("nickname", nickname);
-            param.put("photo", photo);
-            param.put("name","未设置");
-            param.put("hiredate", new Date());
-            param.put("role", "[1]");
-            param.put("status", 1);
-            param.put("createTime", DateUtil.date());
-            param.put("root", false);
-            userMapper.insert(param);
+            userBean.setRole("[1]");
+            userMapper.insert(userBean);
             id=userMapper.searchIdByOpenId(openId);
 
-            HashMap d=new HashMap();
-            param.put("id", id);
-            param.put("dept_name", nickname);
-            param.put("status", 1);
-            deptMapper.insert(d);
+            Dept dept = new Dept();
+            dept.setId(id);
+            dept.setDept_name("keen"+id+"班");
+            dept.setStatus(1);
+            deptMapper.insert(dept);
 
-            HashMap p=new HashMap();
-            param.put("deptId", id);
-            userMapper.insert(p);
+            User user = new User();
+            user.setId(id);
+            user.setDeptId(id);
+            userMapper.updateById(user);
 
             MessageEntity entity=new MessageEntity();
             entity.setSenderId(0);
@@ -134,25 +145,9 @@ public class UserServiceImpl implements UserService {
             messageTask.sendAsync(id+"",entity);
         }
         else if(deptId!=null){
-                HashMap param=new HashMap();
-                param.put("openId", openId);
-                param.put("nickname", nickname);
-                param.put("photo", photo);
-                param.put("name","未设置");
-                param.put("hiredate", new Date());
-                param.put("role", "[3]");
-                param.put("status", 1);
-                param.put("createTime", DateUtil.date());
-                param.put("root", false);
-                param.put("deptId", deptId);
-                userMapper.insert(param);
+                userBean.setDeptId(deptId);
+                userMapper.insert(userBean);
                 id=userMapper.searchIdByOpenId(openId);
-
-                HashMap acc=new HashMap();
-                acc.put("userId",id);
-                acc.put("username","keen"+id);
-                acc.put("password","keen0911");
-                userMapper.updateWebAcc(acc);
 
                 MessageEntity entity=new MessageEntity();
                 entity.setSenderId(0);
@@ -243,5 +238,39 @@ public class UserServiceImpl implements UserService {
                 redisTemplate.opsForValue().set(tid, id);
             }
         }
+    }
+
+    @Override
+    public void sendAccToEmail(User form) {
+        //发送告警邮件
+        User user=userMapper.selectById(form.getId());
+        if(user.getUsername().isEmpty()){
+            HashMap <String,Object>map=new HashMap<>();
+            map.put("userId",form.getId());
+            map.put("username","keen"+form.getId());
+            map.put("password",DateUtil.format(new Date(), "yyyyMMddHH"));
+            userMapper.updateWebAcc(map);
+        }
+        HashMap map = userMapper.searchWebAcc(form.getId());
+        System.out.println("你的keen智慧校园账号"+map.get("username")+"密码为" + map.get("password"));
+
+        try {
+            SimpleMailMessage message=new SimpleMailMessage();
+            message.setTo(form.getEmail());
+            message.setSubject("keen智慧校园找回账号密码");
+            message.setText("你的keen智慧校园账号"+map.get("username")+"密码为" + map.get("password"));
+            emailTask.send(message);
+        }catch (MailSendException e) {
+            throw new KeenException("邮件发送失败，请输入正确邮箱地址");
+        }
+
+
+        MessageEntity entity=new MessageEntity();
+        entity.setSenderId(0);
+        entity.setSenderName("系统消息");
+        entity.setUuid(IdUtil.simpleUUID());
+        entity.setMsg("账号信息已发送至"+form.getEmail()+"，不要再忘了");
+        entity.setSendTime(new Date());
+        messageTask.sendAsync(form.getId()+"",entity);
     }
 }

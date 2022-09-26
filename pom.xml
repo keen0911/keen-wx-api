@@ -8,7 +8,7 @@
         <version>2.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>top.keen0911</groupId>
     <artifactId>keen-wx-api</artifactId>
     <version>1.0.1</version>
     <name>keen-wx-api</name>

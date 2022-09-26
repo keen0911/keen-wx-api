@@ -1,5 +1,6 @@
 package top.keen0911.wx.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import top.keen0911.wx.db.pojo.User;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public interface UserService {
+public interface UserService extends IService<User> {
     int registerUser(String registerCode, String code, String nickname, String photo);
 
     Set<String> searchUserPermissions(int userId);
@@ -29,4 +30,6 @@ public interface UserService {
     public String searchMemberEmail(int id);
 
     public void setWebLoginId(int id,String tid);
+
+    void sendAccToEmail(User form);
 }

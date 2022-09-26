@@ -1,11 +1,17 @@
 package top.keen0911.wx.controller;
 
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.web.multipart.MultipartFile;
 import top.keen0911.wx.common.util.R;
 import top.keen0911.wx.config.shiro.JwtUtil;
 import top.keen0911.wx.config.tencent.TLSSigAPIv2;
 import top.keen0911.wx.controller.form.*;
+import top.keen0911.wx.db.pojo.MessageEntity;
+import top.keen0911.wx.db.pojo.User;
 import top.keen0911.wx.exception.KeenException;
 import top.keen0911.wx.service.UserService;
 import io.swagger.annotations.Api;
@@ -18,10 +24,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -76,12 +83,20 @@ public class UserController {
 
     @GetMapping("/searchUserSummary")
     @ApiOperation("查询用户摘要信息")
+    @RequiresPermissions(value = {"ROOT","USER:SELECT"},logical = Logical.OR)
     public R searchUserSummary(@RequestHeader("token") String token){
         int userId=jwtUtil.getUserId(token);
         HashMap map=userService.searchUserSummary(userId);
         return R.ok().put("result",map);
     }
-
+    @GetMapping("/selectUserInfo")
+    @ApiOperation("查询用户信息")
+    public R selectUserInfo(@RequestHeader("token") String token){
+        int userId=jwtUtil.getUserId(token);
+        User rspUser=userService.getById(userId);
+        System.out.println(rspUser+"-----------------------------------------");
+        return R.ok().put("result",rspUser);
+    }
     @PostMapping("/searchUserGroupByDept")
     @ApiOperation("查询员工列表，按照部门分组排列")
     @RequiresPermissions(value = {"ROOT","EMPLOYEE:SELECT"},logical = Logical.OR)
@@ -112,6 +127,18 @@ public class UserController {
         List<Integer> param=JSONUtil.parseArray(form.getIds()).toList(Integer.class);
         List<HashMap> list=userService.selectUserPhotoAndName(param);
         return R.ok().put("result",list);
+    }
+
+    @PostMapping("/userUpd")
+    @ApiOperation("更新用户信息")
+    public R checkin(@Valid @RequestBody User form, @RequestHeader("token") String token){
+        int userId=jwtUtil.getUserId(token);
+        form.setId(userId);
+        if(!(form.getEmail()==null)){
+            userService.sendAccToEmail(form);
+        }
+        form.setCreateTime(new Date());
+        return userService.updateById(form)?R.ok("保存成功"):R.error("修改失败");
     }
     @GetMapping("/genUserSig")
     @ApiOperation("生成用户签名")

@@ -9,21 +9,44 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class KeenWxApiApplicationTests {
-
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private AipFace client;
+
+    @Test
+    void codeLogin(){
+
+            boolean bool = redisTemplate.hasKey("7baf183a73474ffca4fa69279eb921c1");
+            redisTemplate.opsForValue().set("7baf183a73474ffca4fa69279eb921c1",34);
+            if (bool) {
+
+                String value = redisTemplate.opsForValue().get("7baf183a73474ffca4fa69279eb921c1").toString();
+                if (!"false".equals(value)) {
+                    System.out.println("---"+value);
+                }
+            }
+            else
+                System.out.println(0);
+
+    }
     @Test
     void faceDistinguish() {
+        redisTemplate.opsForValue().set("7baf183a73474ffca4fa69279eb921c1", false, 5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set("7baf183a73474ffca4fa69279eb921c1","34");
+        System.out.println(1);
         String image = "https://keen-1311891599.cos.ap-chengdu.myqcloud.com/img/face/wxfile%3A//tmp_059afdc6924fdfbb7c867d5c7ad4d6aa41914b09b9474468.jpg";
         String imageType = "URL";
 

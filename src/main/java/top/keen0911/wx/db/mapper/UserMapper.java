@@ -47,6 +47,8 @@ public interface UserMapper extends BaseMapper<User> {
     public String searchMemberEmail(int id);
 
     public int updateWebAcc(HashMap param);
+
+    public HashMap searchWebAcc(int id);
 }
 
 
