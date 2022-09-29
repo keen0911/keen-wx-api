@@ -17,7 +17,6 @@ public interface DeptMapper extends BaseMapper<Dept> {
     public ArrayList<HashMap> searchDeptMembers(String keyword);
     public Integer searchDeptByRecode(String recode);
 
-    public int insert(HashMap param);
 }
 
 

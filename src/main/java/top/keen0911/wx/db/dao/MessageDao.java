@@ -23,7 +23,7 @@ public class MessageDao {
     private MongoTemplate mongoTemplate;
 
     public String insert(MessageEntity entity){
-        entity.setSendTime(DateUtil.offset(entity.getSendTime(), DateField.HOUR,8));
+        entity.setSendTime(DateUtil.offset(entity.getSendTime(), DateField.HOUR,0));
         return mongoTemplate.save(entity).get_id();
     }
 
@@ -50,7 +50,7 @@ public class MessageDao {
             one.remove("ref");
             one.remove("_id");
             Date sendTime= (Date) one.get("sendTime");
-            sendTime=DateUtil.offset(sendTime,DateField.HOUR,-8);
+            sendTime=DateUtil.offset(sendTime,DateField.HOUR,0);
 
             String today=DateUtil.today();
             if(today.equals(DateUtil.date(sendTime).toDateStr())){
@@ -66,7 +66,7 @@ public class MessageDao {
     public HashMap searchMessageById(String id){
         HashMap map=mongoTemplate.findById(id,HashMap.class,"message");
         Date sendTime= (Date) map.get("sendTime");
-        sendTime=DateUtil.offset(sendTime,DateField.HOUR,-8);
+        sendTime=DateUtil.offset(sendTime,DateField.HOUR,0);
         map.replace("sendTime",DateUtil.format(sendTime,"yyyy-MM-dd HH:mm"));
         return map;
     }

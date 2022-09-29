@@ -120,14 +120,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 throw new KeenException("无法绑定超级管理员账号");
             }
         }
-        else if(registerCode.equals("班长")){
+        else if(registerCode.equals("202209")){
             userBean.setRole("[1]");
             userMapper.insert(userBean);
             id=userMapper.searchIdByOpenId(openId);
 
             Dept dept = new Dept();
             dept.setId(id);
-            dept.setDept_name("keen"+id+"班");
+            dept.setDept_name("keen"+id+"班hr");
             dept.setStatus(1);
             deptMapper.insert(dept);
 
@@ -140,7 +140,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             entity.setSenderId(0);
             entity.setSenderName("系统消息");
             entity.setUuid(IdUtil.simpleUUID());
-            entity.setMsg("已为你初始化班级，请及时在我的-班级管理更新你的班级信息。及时更新你的邮箱信息以便系统发送你的的web账号和初始密码");
+            entity.setMsg("已为你初始化班级，及时更新你的邮箱信息以便系统发送你的的web账号和初始密码");
             entity.setSendTime(new Date());
             messageTask.sendAsync(id+"",entity);
         }
@@ -153,7 +153,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 entity.setSenderId(0);
                 entity.setSenderName("系统消息");
                 entity.setUuid(IdUtil.simpleUUID());
-                entity.setMsg("欢迎您注册成为一名keener，这是你的web端账号：keen"+id+"，初始密码为keen0911，请及时到www.keen0911.top修改你的web密码。");
+                entity.setMsg("欢迎您注册成为一名keener，及时更新你的邮箱信息以便系统发送你的的web账号和初始密码，请及时到www.keen0911.top修改你的web密码。");
                 entity.setSendTime(new Date());
                 messageTask.sendAsync(id+"",entity);
         }
@@ -244,7 +244,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void sendAccToEmail(User form) {
         //发送告警邮件
         User user=userMapper.selectById(form.getId());
-        if(user.getUsername().isEmpty()){
+        if(user.getUsername()==null){
             HashMap <String,Object>map=new HashMap<>();
             map.put("userId",form.getId());
             map.put("username","keen"+form.getId());
@@ -269,7 +269,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         entity.setSenderId(0);
         entity.setSenderName("系统消息");
         entity.setUuid(IdUtil.simpleUUID());
-        entity.setMsg("账号信息已发送至"+form.getEmail()+"，不要再忘了");
+        entity.setMsg("账号信息已发送至"+form.getEmail()+"，不要忘了o");
         entity.setSendTime(new Date());
         messageTask.sendAsync(form.getId()+"",entity);
     }
